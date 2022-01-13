@@ -30,6 +30,8 @@ export default class Game extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32
     })
+
+    // TODO: Add BGM
   }
 
   create() {
@@ -170,7 +172,7 @@ export default class Game extends Phaser.Scene {
     this.anims.create(
       {
         key: Animations.playerShooting,
-        frames: this.anims.generateFrameNumbers(Objects.playerShooting, { start: 1, end: 2 }),
+        frames: this.anims.generateFrameNumbers(Objects.playerShooting, { start: 0, end: 1 }),
         frameRate: 10,
       }
     )
