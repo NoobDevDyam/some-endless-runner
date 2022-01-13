@@ -1,4 +1,4 @@
-# some-endless-runner
+# some-endless-runner ⌨🔫
 
 > This is a project for my Software Development Class. A simple Endless Typing Game or Endless Runner
 
