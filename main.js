@@ -8,7 +8,6 @@ import Game from './src/scenes/Game'
 import GameOver from './src/scenes/GameOver'
 import Parallax from './src/scenes/ParallaxBackground'
 import Title from './src/scenes/TitleScreen'
-import Word from './src/scenes/Word'
 import Credits from './src/scenes/Credits'
 
 const config = {
@@ -35,7 +34,6 @@ game.scene.add(Scenes.Game, Game)
 game.scene.add(Scenes.GameOver, GameOver)
 game.scene.add(Scenes.Parallax, Parallax)
 game.scene.add(Scenes.Title, Title)
-game.scene.add(Scenes.Word, Word)
 game.scene.add(Scenes.Credits, Credits)
 
 game.scene.start(Scenes.Title)

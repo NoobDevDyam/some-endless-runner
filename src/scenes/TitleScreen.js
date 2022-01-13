@@ -6,10 +6,6 @@ import * as Scenes from '../constants/SceneKeys'
 import * as Objects from '../constants/ObjectKeys'
 
 export default class TitleScreen extends Phaser.Scene {
-  init() {
-    this.cache.destroy()
-  }
-
   preload() {
     this.load.image(Objects.title, Paths.titleImg)
   }

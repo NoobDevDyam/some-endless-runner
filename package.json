@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "parcel index.html",
+    "build": "parcel build index.html --out-dir dist",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -55,6 +56,7 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.63",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
     "@electron-forge/maker-zip": "^6.0.0-beta.63",
+    "copy-webpack-plugin": "^10.2.0",
     "electron": "^16.0.7",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -63,7 +65,8 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "parcel-plugin-clean-easy": "^1.0.2",
-    "parcel-plugin-static-files-copy": "^2.6.0"
+    "parcel-plugin-static-files-copy": "^2.6.0",
+    "url-loader": "^4.1.1"
   },
   "parcelCleanPaths": [
     "dist"

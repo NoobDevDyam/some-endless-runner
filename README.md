@@ -8,8 +8,8 @@
 
 - **Phaser 3**
 - **Parcel-Bundler**
-- **Electron**
 - **Webpack**
+- ~~**Electron**~~
 
 ---
 
@@ -17,5 +17,9 @@
 
 - *Made in 2 days, hence very messy*
 - *Will refactor with time*
-- `npm run start` is running with parcel, to change to electron **package.json** is the key.
+- `npm run start` is running with parcel, ~~to change to electron **package.json** is the key.~~
 - please pass me sir :')
+
+## IMPORTANT!
+
+* Electron can't read the projects static files 😭

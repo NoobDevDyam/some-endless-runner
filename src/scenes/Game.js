@@ -9,6 +9,7 @@ import * as Animations from '../constants/Animations'
 export default class Game extends Phaser.Scene {
   init() {
     this.score = 0
+    this.enemy = undefined
   }
 
   preload() {
