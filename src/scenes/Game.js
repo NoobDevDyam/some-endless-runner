@@ -187,7 +187,7 @@ export default class Game extends Phaser.Scene {
     return player
   }
 
-  // we create an enemy and add that enemy to a group to get more enemies 
+  // we create an enemy and add that enemy to a group to get more enemies
   createEnemy() {
     this.word = this.createWord()
 
@@ -216,8 +216,8 @@ export default class Game extends Phaser.Scene {
     return enemyGroup
   }
 
-  // eslint-disable-next-line class-methods-use-this
   // TODO: Use an API To generate random words.
+  // eslint-disable-next-line class-methods-use-this
   createWord() {
     const words = [
       'PASS',
