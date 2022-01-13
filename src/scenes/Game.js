@@ -7,6 +7,10 @@ import * as Objects from '../constants/ObjectKeys'
 import * as Animations from '../constants/Animations'
 
 export default class Game extends Phaser.Scene {
+  init() {
+    this.score = 0
+  }
+
   preload() {
     // load ground
     this.load.image(Objects.ground, Paths.groundImg)
@@ -23,8 +27,8 @@ export default class Game extends Phaser.Scene {
       frameHeight: 12
     })
     this.load.spritesheet(Objects.explosion, Paths.explosionSprite, {
-      frameWidth: 16,
-      frameHeight: 12
+      frameWidth: 32,
+      frameHeight: 32
     })
   }
 
@@ -40,28 +44,96 @@ export default class Game extends Phaser.Scene {
     // add player
     this.player = this.createPlayer()
     // add enemy
-    this.enemy = this.createEnemy()
+    this.enemy = this.createEnemyGroup(this.createEnemy())
 
     // add collider between player and ground
     this.physics.add.collider(this.player, this.ground)
     // add collider between enemy and ground
     this.physics.add.collider(this.enemy, this.ground)
+    // add collider between player and enemy
+    // detect if enemy has hit the player
+    this.physics.add.collider(this.player, this.enemy, this.hitEnemy, null, this)
 
-    // create listener for cursorkeys
-    this.cursors = this.input.keyboard.createCursorKeys()
+    // add scoretext
+    this.scoreLable = this.add.text(400, 50, this.score, {
+      fontSize: 36,
+      color: 0xff0000
+    })
+
+    // add text for instructions
+    this.add.text(400, 100, 'Type the word to DESTROY your enemies').setOrigin(0.5)
+    this.wordInputLabel = this.add.text(400, 225, '', {
+      fontSize: 48,
+      color: 0x0000ff
+    }).setOrigin(0.5)
+
+    // keyboard input
+    this.input.keyboard.on('keydown', (event) => {
+      if (event.keyCode === 8 && this.wordInputLabel.text.length > 0) {
+        this.wordInputLabel.text = this.wordInputLabel.text
+          .substring(0, this.wordInputLabel.text.length - 1)
+      } else if (event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90)) {
+        this.wordInputLabel.text += event.key
+        // BUG playing really fast, updates to idle immediately
+        this.player.anims.play(Animations.playerShooting, true)
+      }
+    })
   }
 
   update() {
     // change speed when player kills enemy
-    let speed = 1
+    this.speed = 1
     this.player.anims.play(Animations.playerIdle, true)
-    this.enemy.anims.play(Animations.enemy, true)
+    // iterate over each child and play their animations
+    this.enemy.children.iterate((child) => {
+      child.anims.play(Animations.enemy, true)
+    })
 
-    this.time.delayedCall(1500, () => this.moveEnemy(speed))
+    // delay the movement of the enemy when starting the game
+    this.time.delayedCall(1500, () => this.moveEnemy(this.speed))
 
-    if (this.enemy.x === this.player.x + 41) {
-      this.hitEnemy()
+    this.wordInput = this.wordInputLabel.text
+
+    // some debug stuff because im dumb without them
+    console.log(`Text: ${this.wordInput}`)
+    console.log(`Word: ${this.word}`)
+    console.log(`Score: ${this.score}`)
+
+    // check if the word typed is equal to the word given
+    if (this.wordInput === this.word
+      && this.word.length === this.wordInput.length) {
+      // update score
+      this.killEnemy()
+      this.scoreLable.text = this.score
+    } else {
+      console.log('not equal')
     }
+
+    // check if enemy count is zero
+    if (this.enemy.countActive(true) === 0) {
+      this.enemy.add(this.createEnemy())
+    }
+
+    // inscrease enemy speed when score reaches certain threshhold.
+    if (this.score > 15) {
+      this.speed = 2.5
+    } else if (this.score > 10) {
+      this.speed = 2
+    } else if (this.score > 5) {
+      this.speed = 1.5
+    }
+  }
+
+  // method called to kill / destroy enemy
+  killEnemy() {
+    this.score += 1
+    this.enemy.children.iterate((child) => {
+      // disable the enemy
+      child.destroy()
+    })
+    this.wordInputLabel.text = ''
+    this.wordLabel.text = ''
+    console.log('enemy killed')
   }
 
   /**
@@ -75,9 +147,14 @@ export default class Game extends Phaser.Scene {
   /** @param {number} speed */
 
   moveEnemy(speed) {
-    this.enemy.x -= speed
+    this.enemy.children.iterate((child) => {
+      // eslint-disable-next-line no-param-reassign
+      child.x -= speed
+    })
   }
 
+  // we declare all player animations here
+  // we also create the player here, this function returns the player sprite and gameobject
   createPlayer() {
     const player = this.add.sprite(50, 225, Objects.playerIdle)
     this.physics.add.existing(player)
@@ -93,9 +170,8 @@ export default class Game extends Phaser.Scene {
     this.anims.create(
       {
         key: Animations.playerShooting,
-        frames: this.anims.generateFrameNumbers(Objects.playerShooting, { start: 0, end: 2 }),
+        frames: this.anims.generateFrameNumbers(Objects.playerShooting, { start: 1, end: 2 }),
         frameRate: 10,
-        repeat: -1
       }
     )
     this.anims.create(
@@ -109,9 +185,15 @@ export default class Game extends Phaser.Scene {
     return player
   }
 
+  // we create an enemy and add that enemy to a group to get more enemies 
   createEnemy() {
+    this.word = this.createWord()
+
     const enemy = this.add.sprite(750, 225, Objects.enemy).setScale(2)
-    this.physics.add.existing(enemy)
+
+    this.wordLabel = this.add.text(400, 150, this.word, {
+      fontSize: 38
+    }).setOrigin(0.5)
 
     this.anims.create(
       {
@@ -123,5 +205,33 @@ export default class Game extends Phaser.Scene {
     )
 
     return enemy
+  }
+
+  createEnemyGroup(enemy) {
+    const enemyGroup = this.physics.add.group()
+
+    enemyGroup.add(enemy)
+    return enemyGroup
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  // TODO: Use an API To generate random words.
+  createWord() {
+    const words = [
+      'PASS',
+      'SOFTWARE',
+      'DEVELOPMENT',
+      'PLEASE',
+      'COFFEE',
+      'GRAPHICS',
+      'LAPTOP',
+      'ELECTRON',
+      'COMPUTER',
+      'NINJA',
+      'SLEEP'
+    ]
+    const wordIndex = Phaser.Math.Between(0, words.length - 1)
+
+    return words[wordIndex]
   }
 }
