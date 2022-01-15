@@ -6,6 +6,9 @@ import * as Scenes from '../constants/SceneKeys'
 import * as Objects from '../constants/ObjectKeys'
 import * as Animations from '../constants/Animations'
 
+// import random words API
+const randomWords = require('random-words')
+
 export default class Game extends Phaser.Scene {
   init() {
     this.score = 0
@@ -33,9 +36,28 @@ export default class Game extends Phaser.Scene {
     })
 
     // TODO: Add BGM
+    // add bgm
+    this.load.audio(Objects.music, Paths.music)
+    // add sfx
+    this.load.audio(Objects.enemyDeath, Paths.enemyDeath)
+    this.load.audio(Objects.typing, Paths.typing)
+    this.load.audio(Objects.playerDeath, Paths.playerDeath)
   }
 
   create() {
+    // load bgm
+    this.music = this.sound.add(Objects.music, { loop: true })
+    // load sfx
+    this.explosion = this.sound.add(Objects.enemyDeath, { loop: false })
+    this.typing = this.sound.add(Objects.typing, { loop: false })
+    this.death = this.sound.add(Objects.playerDeath, { loop: false })
+
+    // set volume so it's not way too dank
+    this.sound.volume = 0.3
+
+    // play bgm
+    this.music.play()
+
     // load parallax scene as background
     this.scene.run(Scenes.Parallax)
     this.scene.sendToBack(Scenes.Parallax)
@@ -74,11 +96,10 @@ export default class Game extends Phaser.Scene {
     this.input.keyboard.on('keydown', (event) => {
       if (event.keyCode === 8 && this.wordInputLabel.text.length > 0) {
         this.wordInputLabel.text = this.wordInputLabel.text
-          .substring(0, this.wordInputLabel.text.length - 1)
-      } else if (event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90)) {
+          .substring(0, this.wordInputLabel.text.length - 1) // delete last typed letter
+      } else if (event.keyCode > 57 && event.keyCode <= 90) {
         this.wordInputLabel.text += event.key
-        // BUG playing really fast, updates to idle immediately
-        this.player.anims.play(Animations.playerShooting, true)
+        this.typing.play()
       }
     })
   }
@@ -105,8 +126,10 @@ export default class Game extends Phaser.Scene {
     // check if the word typed is equal to the word given
     if (this.wordInput === this.word
       && this.word.length === this.wordInput.length) {
-      // update score
+      this.player.anims.play(Animations.playerShooting, true)
+      this.explosion.play()
       this.killEnemy()
+      // update score
       this.scoreLable.text = this.score
     } else {
       console.log('not equal')
@@ -118,7 +141,9 @@ export default class Game extends Phaser.Scene {
     }
 
     // inscrease enemy speed when score reaches certain threshhold.
-    if (this.score > 15) {
+    if (this.score > 25) {
+      this.speed = 3
+    } else if (this.score > 15) {
       this.speed = 2.5
     } else if (this.score > 10) {
       this.speed = 2
@@ -144,6 +169,8 @@ export default class Game extends Phaser.Scene {
   */
 
   hitEnemy() {
+    this.music.stop()
+    this.death.play()
     this.scene.start(Scenes.GameOver)
   }
 
@@ -177,13 +204,6 @@ export default class Game extends Phaser.Scene {
         frameRate: 10,
       }
     )
-    this.anims.create(
-      {
-        key: Animations.explosion,
-        frames: this.anims.generateFrameNumbers(Objects.explosion, { start: 0, end: 8 }),
-        frameRate: 10,
-      }
-    )
 
     return player
   }
@@ -206,6 +226,13 @@ export default class Game extends Phaser.Scene {
         repeat: -1
       }
     )
+    this.anims.create(
+      {
+        key: Animations.explosion,
+        frames: this.anims.generateFrameNumbers(Objects.explosion, { start: 0, end: 8 }),
+        frameRate: 10,
+      }
+    )
 
     return enemy
   }
@@ -217,10 +244,25 @@ export default class Game extends Phaser.Scene {
     return enemyGroup
   }
 
-  // TODO: Use an API To generate random words.
+  // TODO: Use an API To generate random words. -- DONE
   // eslint-disable-next-line class-methods-use-this
   createWord() {
-    const words = [
+    let length = 3
+
+    // change length of generated words with inscreased score
+    if (this.score > 50) {
+      length = 10
+    } else if (this.score > 20) {
+      length = 8
+    } else if (this.score > 10) {
+      length = 7
+    } else if (this.score > 5) {
+      length = 5
+    }
+
+    // generate an array of 10 words
+    const words = randomWords({ exactly: 10, maxLength: length })
+    const testWords = [
       'PASS',
       'SOFTWARE',
       'DEVELOPMENT',

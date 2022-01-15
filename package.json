@@ -2,14 +2,10 @@
   "name": "some-endless-runner",
   "productName": "some-endless-runner",
   "version": "1.0.0",
-  "description": "My Electron application description",
-  "main": "index.js",
+  "description": "Simple Game for my Finals Project",
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html --out-dir dist",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
@@ -18,46 +14,15 @@
     "email": "noobdevjam@gmail.com"
   },
   "license": "MIT",
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "some_endless_runner"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
-  },
+  "config": {},
   "dependencies": {
-    "electron": "^16.0.7",
-    "electron-squirrel-startup": "^1.0.0",
-    "phaser": "^3.55.2"
+    "parcel-bundler": "^1.12.5",
+    "parcel-plugin-static-files-copy": "^2.6.0",
+    "parcel-plugin-url-loader": "^1.3.1",
+    "phaser": "^3.55.2",
+    "random-words": "^1.1.1"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.63",
-    "@electron-forge/maker-deb": "^6.0.0-beta.63",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.63",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
-    "@electron-forge/maker-zip": "^6.0.0-beta.63",
-    "copy-webpack-plugin": "^10.2.0",
-    "electron": "^16.0.7",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.3",
@@ -65,8 +30,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "parcel-plugin-clean-easy": "^1.0.2",
-    "parcel-plugin-static-files-copy": "^2.6.0",
-    "url-loader": "^4.1.1"
+    "parcel-plugin-static-files-copy": "^2.6.0"
   },
   "parcelCleanPaths": [
     "dist"
@@ -74,5 +38,9 @@
   "staticFiles": {
     "staticPath": "public",
     "watcherGlob": "**"
+  },
+  "url-loader": {
+    "exts": ["ogg", "png"],
+    "limit": 10240
   }
 }
