@@ -80,7 +80,7 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(this.player, this.enemy, this.hitEnemy, null, this)
 
     // add scoretext
-    this.scoreLable = this.add.text(400, 50, this.score, {
+    this.scoreLabel = this.add.text(400, 50, this.score, {
       fontSize: 36,
       color: 0xff0000
     })
@@ -130,7 +130,7 @@ export default class Game extends Phaser.Scene {
       this.explosion.play()
       this.killEnemy()
       // update score
-      this.scoreLable.text = this.score
+      this.scoreLabel.text = this.score
     } else {
       console.log('not equal')
     }
