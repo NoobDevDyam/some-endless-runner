@@ -18,6 +18,7 @@ export default class Game extends Phaser.Scene {
   preload() {
     // load ground
     this.load.image(Objects.ground, Paths.groundImg)
+    // load sprites
     this.load.spritesheet(Objects.playerIdle, Paths.playerIdleSprite, {
       frameWidth: 31,
       frameHeight: 43
@@ -107,6 +108,7 @@ export default class Game extends Phaser.Scene {
   update() {
     // change speed when player kills enemy
     this.speed = 1
+    // play player animation
     this.player.anims.play(Animations.playerIdle, true)
     // iterate over each child and play their animations
     this.enemy.children.iterate((child) => {

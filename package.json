@@ -37,12 +37,5 @@
   "staticFiles": {
     "staticPath": "public",
     "watcherGlob": "**"
-  },
-  "url-loader": {
-    "exts": [
-      "ogg",
-      "png"
-    ],
-    "limit": 10240
   }
 }
